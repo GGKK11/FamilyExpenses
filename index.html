@@ -140,18 +140,26 @@
           Date: date
         };
 
-		await fetch('https://script.google.com/macros/s/AKfycbw_x-Qm9kTEBBuzGhyO61YCnpkV6oFvm7zrXJg8Yy70OXR02USDnoqIMjSh4F9SH_l6Dw/exec', {
+try {
+  const response = await fetch('https://script.google.com/macros/s/AKfycbwYlofzxsX_7XP4lGR352XzzK0poy8euADcqzoL-Y3sZrYh7u6WZuJqIazmjlxvRvLWCA/exec', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(expenseData)
+  });
 
-          method: 'POST',
-         // mode: 'no-cors',
-	// mode: 'cors',  ← optional
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify(expenseData)
-        });
+  const result = await response.json(); // Parse backend response
+
+  if (result.status === "success") {
+    console.log("Expense submitted successfully.");
+  } else {
+    console.error("Server error:", result);
+  }
+} catch (err) {
+  console.error("Fetch error:", err);
+}
       }
-
       alert('Expenses added!');
       form.reset();
     });
