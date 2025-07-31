@@ -143,7 +143,8 @@
 		await fetch('https://script.google.com/macros/s/AKfycbw_x-Qm9kTEBBuzGhyO61YCnpkV6oFvm7zrXJg8Yy70OXR02USDnoqIMjSh4F9SH_l6Dw/exec', {
 
           method: 'POST',
-          mode: 'no-cors',
+         // mode: 'no-cors',
+	// mode: 'cors',  ← optional
           headers: {
             'Content-Type': 'application/json'
           },
