@@ -1,62 +1,131 @@
-<script>
-  const form = document.getElementById('expense-form');
-  form.addEventListener('submit', async (e) => {
-    e.preventDefault();
-
-    const category = document.getElementById('category').value;
-    const items = document.getElementById('item').value.split(',').map(i => i.trim());
-    const brand = document.getElementById('brand').value;
-    const costs = document.getElementById('cost').value.split(',').map(c => c.trim());
-    const quantities = document.getElementById('quantity').value.split(',').map(q => q.trim());
-    const oil = document.getElementById('oil').value;
-    const oilBrand = document.getElementById('oilBrand').value;
-    const oilCost = document.getElementById('oilCost').value;
-    const oilQty = document.getElementById('oilQty').value;
-    const date = document.getElementById('date').value;
-
-    let successCount = 0;
-
-    for (let i = 0; i < items.length; i++) {
-      const expenseData = {
-        Category: category,
-        Item: items[i] || '',
-        Brand: brand,
-        Cost: costs[i] || '',
-        Quantity: quantities[i] || '',
-        OilType: oil,
-        OilBrand: oilBrand,
-        OilCost: oilCost,
-        OilQty: oilQty,
-        Date: date
-      };
-
-      try {
-        const response = await fetch('https://script.google.com/macros/s/AKfycbyDNqngYUIPSYBn4cKMm3xMsew1I8xuYwbe6NbKJNa-BCs5MQsKFmSJWMawZOY-INEs2g/exec', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify(expenseData)
-        });
-
-        const result = await response.json();
-
-        if (result.status === "success") {
-          successCount++;
-        } else {
-          console.error("Backend error:", result.message || result);
-        }
-
-      } catch (err) {
-        console.error("Fetch/network error:", err);
-      }
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Family Expense Tracker</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 2rem;
+      background: #f9f9f9;
     }
-
-    if (successCount > 0) {
-      alert(`${successCount} expense(s) added successfully!`);
-      form.reset();
-    } else {
-      alert("No expenses were saved. Check your internet or backend.");
+    h1 {
+      text-align: center;
     }
-  });
-</script>
+    form {
+      background: #fff;
+      padding: 1.5rem;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+      max-width: 600px;
+      margin: auto;
+    }
+    label {
+      display: block;
+      margin-top: 1rem;
+    }
+    input, select, button, datalist {
+      width: 100%;
+      padding: 0.6rem;
+      margin-top: 0.5rem;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+    }
+    button {
+      background-color: #28a745;
+      color: white;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #218838;
+    }
+    small {
+      font-size: 0.85rem;
+      color: #555;
+    }
+  </style>
+</head>
+<body>
+  <h1>Daily Expense Tracker</h1>
+  <form id="expense-form">
+    <label for="category">Category</label>
+    <input list="categories" id="category" name="category" required>
+    <datalist id="categories">
+      <option value="Utilities - Electricity">
+      <option value="Utilities - Water Bill">
+      <option value="Utilities - Tax Bill">
+      <option value="Food - Vegetables">
+      <option value="Food - Fruits">
+      <option value="Food - Rice">
+      <option value="Food - Pulses">
+      <option value="Food - Wheat">
+      <option value="Food - Oil">
+      <option value="Food - Chili Powder">
+      <option value="Food - Seeds">
+      <option value="Medicines">
+      <option value="Washing Powder">
+      <option value="Fuel - Petrol">
+      <option value="Fuel - Auto Charges">
+      <option value="Fuel - Bus Fare">
+      <option value="Education - School Fees">
+      <option value="Entertainment">
+      <option value="Snacks - Junk Food">
+    </datalist>
+
+    <label for="item">Item Names <small>(comma-separated)</small></label>
+    <input type="text" id="item" name="item" required />
+
+    <label for="brand">Brand / Store Name</label>
+    <input type="text" id="brand" name="brand" />
+
+    <label for="cost">Item Costs <small>(comma-separated)</small></label>
+    <input type="text" id="cost" name="cost" required />
+
+    <label for="quantity">Quantities <small>(comma-separated)</small></label>
+    <input type="text" id="quantity" name="quantity" required />
+
+    <label for="oil">Oil Type</label>
+    <select id="oil" name="oil">
+      <option value="">Select Oil Type</option>
+      <option value="Coconut Oil">Coconut Oil</option>
+      <option value="Sunflower Oil">Sunflower Oil</option>
+      <option value="Olive Oil">Olive Oil</option>
+      <option value="Groundnut Oil">Groundnut Oil</option>
+      <option value="Gingelly Oil">Gingelly Oil</option>
+    </select>
+
+    <label for="oilBrand">Oil Brand</label>
+    <input type="text" id="oilBrand" name="oilBrand" />
+
+    <label for="oilCost">Oil Cost (INR)</label>
+    <input type="number" id="oilCost" name="oilCost" step="0.01" />
+
+    <label for="oilQty">Oil Quantity</label>
+    <input type="text" id="oilQty" name="oilQty" />
+
+    <label for="date">Date</label>
+    <input type="date" id="date" name="date" required />
+
+    <button type="submit">Add Expense</button>
+  </form>
+
+  <script>
+    const form = document.getElementById('expense-form');
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const category = document.getElementById('category').value;
+      const items = document.getElementById('item').value.split(',').map(i => i.trim());
+      const brand = document.getElementById('brand').value;
+      const costs = document.getElementById('cost').value.split(',').map(c => c.trim());
+      const quantities = document.getElementById('quantity').value.split(',').map(q => q.trim());
+      const oil = document.getElementById('oil').value;
+      const oilBrand = document.getElementById('oilBrand').value;
+      const oilCost = document.getElementById('oilCost').value;
+      const oilQty = document.getElementById('oilQty').value;
+      const date = document.getElementById('date').value;
+
+      let successCount = 0;
+
+      for (let i = 0; i < items.l
