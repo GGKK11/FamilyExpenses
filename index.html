@@ -73,21 +73,21 @@
       <option value="Snacks - Junk Food">
     </datalist>
 
-    <label for="item">Item Names <small>(comma-separated: Carrot, Eggplant, Spinach)</small></label>
-    <input type="text" id="item" name="item" placeholder="e.g., Carrot, Eggplant, Spinach" required />
+    <label for="item">Item Names <small>(comma-separated)</small></label>
+    <input type="text" id="item" name="item" required />
 
     <label for="brand">Brand / Store Name</label>
-    <input type="text" id="brand" name="brand" placeholder="e.g., Fortune, Dmart, Supermarket" />
+    <input type="text" id="brand" name="brand" />
 
-    <label for="cost">Item Costs <small>(comma-separated: 55, 65, 20)</small></label>
-    <input type="text" id="cost" name="cost" placeholder="e.g., 55, 65, 20" required />
+    <label for="cost">Item Costs <small>(comma-separated)</small></label>
+    <input type="text" id="cost" name="cost" required />
 
-    <label for="quantity">Quantities <small>(comma-separated: 1kg, 500g, 1bunch)</small></label>
-    <input type="text" id="quantity" name="quantity" placeholder="e.g., 1kg, 500g, 1bunch" required />
+    <label for="quantity">Quantities <small>(comma-separated)</small></label>
+    <input type="text" id="quantity" name="quantity" required />
 
     <label for="oil">Oil Type</label>
     <select id="oil" name="oil">
-      <option value="">Select Oil Type (if applicable)</option>
+      <option value="">Select Oil Type</option>
       <option value="Coconut Oil">Coconut Oil</option>
       <option value="Sunflower Oil">Sunflower Oil</option>
       <option value="Olive Oil">Olive Oil</option>
@@ -95,14 +95,14 @@
       <option value="Gingelly Oil">Gingelly Oil</option>
     </select>
 
-    <label for="oilBrand">Oil Brand / Store (if applicable)</label>
-    <input type="text" id="oilBrand" name="oilBrand" placeholder="e.g., Gemini, Fortune, Dmart" />
+    <label for="oilBrand">Oil Brand</label>
+    <input type="text" id="oilBrand" name="oilBrand" />
 
     <label for="oilCost">Oil Cost (INR)</label>
-    <input type="number" id="oilCost" name="oilCost" step="0.01" placeholder="e.g., 145" />
+    <input type="number" id="oilCost" name="oilCost" step="0.01" />
 
     <label for="oilQty">Oil Quantity</label>
-    <input type="text" id="oilQty" name="oilQty" placeholder="e.g., 1L, 500ml" />
+    <input type="text" id="oilQty" name="oilQty" />
 
     <label for="date">Date</label>
     <input type="date" id="date" name="date" required />
@@ -126,6 +126,8 @@
       const oilQty = document.getElementById('oilQty').value;
       const date = document.getElementById('date').value;
 
+      let successCount = 0;
+
       for (let i = 0; i < items.length; i++) {
         const expenseData = {
           Category: category,
@@ -140,28 +142,31 @@
           Date: date
         };
 
-try {
-  const response = await fetch('https://script.google.com/macros/s/AKfycbw5SKxmUHcfm7E9Gjqn7NqBPhql3P1c5qKuV-lkOQkHzg-7t1O9Uebk6zfN0V5hIc-krw/exec', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json'
-    },
-    body: JSON.stringify(expenseData)
-  });
+        try {
+          const response = await fetch('https://script.google.com/macros/s/AKfycbxD2fBKQZx__KEPAldiq2eGKFaUtjKiwrgyWVoZhPpe0ltUQDFJ9HUax1ToGKO6wvVa8Q/exec', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(expenseData)
+          });
 
-  const result = await response.json(); // Parse backend response
-
-  if (result.status === "success") {
-    console.log("Expense submitted successfully.");
-  } else {
-    console.error("Server error:", result);
-  }
-} catch (err) {
-  console.error("Fetch error:", err);
-}
+          if (response.ok) {
+            successCount++;
+          } else {
+            console.error("Failed for item:", items[i]);
+          }
+        } catch (err) {
+          console.error("Network error:", err);
+        }
       }
-      alert('Expenses added!');
-      form.reset();
+
+      if (successCount > 0) {
+        alert(`${successCount} expense(s) added successfully!`);
+        form.reset();
+      } else {
+        alert("No expenses were saved. Check your internet or backend.");
+      }
     });
   </script>
 </body>
