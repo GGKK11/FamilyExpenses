@@ -128,4 +128,47 @@
 
       let successCount = 0;
 
-      for (let i = 0; i < items.l
+      for (let i = 0; i < items.length; i++) {
+        const expenseData = {
+          Category: category,
+          Item: items[i] || '',
+          Brand: brand,
+          Cost: costs[i] || '',
+          Quantity: quantities[i] || '',
+          OilType: oil,
+          OilBrand: oilBrand,
+          OilCost: oilCost,
+          OilQty: oilQty,
+          Date: date
+        };
+
+        try {
+          const response = await fetch('https://script.google.com/macros/s/AKfycbz5dWuh1jbx9wUczHOtzo6pNbtpAkMUWVsCn7UA-Lyz0a-ogx3s20mMSEICIc8TBu3KFw/exec', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(expenseData)
+          });
+
+          const result = await response.json();
+          if (result.status === "success") {
+            successCount++;
+          } else {
+            console.error("Server error:", result.message);
+          }
+        } catch (err) {
+          console.error("Network error:", err);
+        }
+      }
+
+      if (successCount > 0) {
+        alert(`${successCount} expense(s) added successfully!`);
+        form.reset();
+      } else {
+        alert("No expenses were saved. Check your internet or backend.");
+      }
+    });
+  </script>
+</body>
+</html>
